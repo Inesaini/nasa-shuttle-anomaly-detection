@@ -38,6 +38,23 @@ Local Outlier Factor, One-Class SVM) and serves them in a Streamlit diagnostic a
 
 ## Method
 
+```mermaid
+flowchart LR
+    A["Statlog Shuttle<br/>OpenML"] --> B["Drop time attribute A1<br/>remove duplicates"]
+    B --> C["Stratified split<br/>60 / 20 / 20"]
+    C --> D1["A: train on all rows<br/>(unsupervised)"]
+    C --> D2["B: train on normal rows only"]
+    D1 --> E["Grid search<br/>ranked by validation PR-AUC"]
+    D2 --> E
+    E --> F["Threshold<br/>auto or tuned on validation"]
+    F --> G["Single evaluation<br/>on the test set"]
+```
+
+Isolation Forest builds random trees that split the data on random features at random
+values. Anomalies are rare and different, so they get isolated after only a few splits: the
+shorter the average path length over the forest, the higher the anomaly score. The model only
+outputs a score, so a threshold is needed to turn it into a normal / anomaly decision.
+
 **Two training settings**
 
 - **A — unsupervised:** trained on all training rows, labels unused.
