@@ -1,16 +1,12 @@
-# NASA Shuttle Anomaly Detection — Isolation Forest
+# NASA Shuttle Anomaly Detection with Isolation Forest
 
-Anomaly detection on the **Statlog (Shuttle)** dataset with scikit-learn's
-**Isolation Forest**. Class 1 is the normal flight state (~79% of the data). Classes 2–7 are
-rare states and are treated as anomalies.
+**Flag abnormal Space Shuttle sensor states without labelled anomalies: trained on normal flights only, the model catches 66% of anomalies while raising a false alarm on just 1.3% of normal readings.**
 
-This repository holds my part of a team Machine Learning mini project at ESI-SBA: the
-Isolation Forest model. The complete project compares several detectors (Isolation Forest,
-Local Outlier Factor, One-Class SVM) and serves them in a Streamlit diagnostic app. You can find it here:
+Unsupervised anomaly detection on the **Statlog (Shuttle)** dataset with scikit-learn's **Isolation Forest**. Class 1 is the normal flight state (~79% of the data); classes 2–7 are rare states, treated as anomalies.
 
-**➡️ Full project: [S4afou/shuttle-nasa-ML](https://github.com/S4afou/shuttle-nasa-ML)**
+This repository is my part of a team Machine Learning mini project at ESI-SBA. The complete project compares Isolation Forest, Local Outlier Factor and One-Class SVM and serves them in a Streamlit app: **[S4afou/shuttle-nasa-ML](https://github.com/S4afou/shuttle-nasa-ML)**.
 
----
+**Stack:** Python · scikit-learn · pandas · Matplotlib · OpenML
 
 ## Highlights
 
@@ -57,8 +53,8 @@ outputs a score, so a threshold is needed to turn it into a normal / anomaly dec
 
 **Two training settings**
 
-- **A — unsupervised:** trained on all training rows, labels unused.
-- **B — normal only:** trained only on class-1 training rows. This makes the approach
+- **A, unsupervised:** trained on all training rows, labels unused.
+- **B, normal only:** trained only on class-1 training rows. This makes the approach
   semi-supervised, but normal operation data is easy to collect for this kind of telemetry.
 
 **Hyperparameter search** (`n_estimators` ∈ {100, 300}, `max_samples` ∈ {256, 0.25, 1.0},
@@ -75,6 +71,15 @@ validation set.
 
 ## Results on the test set
 
+```mermaid
+%%{init: {"themeVariables": {"xyChart": {"plotColorPalette": "#2f6fdf"}}}}%%
+xychart-beta horizontal
+    title "Anomaly F1 on the test set (higher is better)"
+    x-axis ["Always normal", "A unsupervised, auto", "A unsupervised, tuned", "B normal-only, auto", "B normal-only, tuned"]
+    y-axis "F1" 0 --> 1
+    bar [0, 0.547, 0.576, 0.661, 0.775]
+```
+
 | Model | Threshold | PR-AUC | ROC-AUC | Precision | Recall | F1 (anomaly) | Accuracy |
 |---|---|---|---|---|---|---|---|
 | Baseline (always normal) | – | 0.214 | 0.500 | 0.000 | 0.000 | 0.000 | 0.786 |
@@ -86,6 +91,9 @@ validation set.
 ![Precision-recall curve and score distributions](figures/pr_curve_and_scores.png)
 
 ![Confusion matrices](figures/confusion_matrices.png)
+
+<details>
+<summary>Detection rate per class and seed stability</summary>
 
 **Detection rate per class** on the test set, with the tuned threshold. For class 1 this is
 the false-positive rate.
@@ -106,6 +114,8 @@ the false-positive rate.
 |---|---|---|
 | A (unsupervised) | 0.649 ± 0.017 | 0.555 ± 0.004 |
 | B (normal only) | 0.860 ± 0.007 | 0.767 ± 0.007 |
+
+</details>
 
 ## Takeaways
 
